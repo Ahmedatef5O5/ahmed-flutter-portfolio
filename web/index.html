@@ -1,38 +1,85 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-  <base href="$FLUTTER_BASE_HREF">
-
+  <base href="/">
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description"
+    content="Ahmed Atef — Flutter Developer Portfolio. Building beautiful mobile & web apps with Flutter and Clean Architecture.">
+  <meta name="keywords" content="Flutter, Dart, Mobile Developer, Flutter Developer, Clean Architecture">
+  <meta name="author" content="Ahmed Atef">
 
-  <!-- iOS meta tags & icons -->
+  <!-- Open Graph -->
+  <meta property="og:title" content="Ahmed Atef — Flutter Developer">
+  <meta property="og:description" content="Building beautiful, performant apps with Flutter & Clean Architecture.">
+  <meta property="og:type" content="website">
+
+  <!-- PWA / icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="ahmed_portfolio">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>ahmed_portfolio</title>
+  <title>Ahmed Atef — Flutter Developer</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    body {
+      background-color: #0A0A14;
+      margin: 0;
+      padding: 0;
+    }
+
+    #loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #0A0A14;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background: #6C63FF;
+      border-radius: 50%;
+      margin: 0 4px;
+      animation: bounce 0.8s infinite alternate;
+    }
+
+    .dot:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    .dot:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes bounce {
+      from {
+        transform: translateY(0);
+        opacity: 0.4;
+      }
+
+      to {
+        transform: translateY(-10px);
+        opacity: 1;
+      }
+    }
+  </style>
 </head>
+
 <body>
+  <div id="loading">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      document.getElementById('loading').remove();
+    });
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
+
 </html>
