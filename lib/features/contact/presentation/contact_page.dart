@@ -18,6 +18,7 @@ class ContactPage extends StatelessWidget {
     final r = Responsive.of(context);
 
     return SingleChildScrollView(
+      primary: true,
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: AppSizes.maxContentWidth),

@@ -13,34 +13,18 @@ class HomePage extends StatelessWidget {
     final hPad = r.value(mobile: 20.0, desktop: 60.0);
 
     return SingleChildScrollView(
+      primary: true,
       child: Column(
         children: [
           const HeroSection(),
 
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: hPad),
-            child: const TechStrip(),
-          ),
-
           Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(
                 maxWidth: AppSizes.maxContentWidth,
               ),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: hPad, vertical: 40),
-                child: const TechStrip(),
-              ),
-            ),
-          ),
-
-          Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: AppSizes.maxContentWidth,
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: hPad, vertical: 16),
+                padding: EdgeInsets.symmetric(horizontal: hPad, vertical: 24),
                 child: const TechStrip(),
               ),
             ),
