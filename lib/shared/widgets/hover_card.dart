@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 
 class HoverCard extends StatefulWidget {
   final Widget child;
@@ -31,9 +32,9 @@ class _HoverCardState extends State<HoverCard>
     super.initState();
     _ctrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 220),
     );
-    _anim = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+    _anim = CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic);
   }
 
   @override
@@ -63,37 +64,88 @@ class _HoverCardState extends State<HoverCard>
         onTap: widget.onTap,
         child: AnimatedBuilder(
           animation: _anim,
-          builder:
-              (_, child) => Transform.translate(
-                offset: Offset(0, -4 * _anim.value),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: cs.surface,
-                    borderRadius: radius,
-                    border: Border.all(
-                      color:
-                          Color.lerp(
-                            cs.outline.withValues(alpha: isDark ? 0.25 : 0.55),
-                            cs.primary.withValues(alpha: 0.55),
-                            _anim.value,
-                          )!,
-                      width: 1.0 + (0.5 * _anim.value),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: cs.primary.withValues(
-                          alpha: (isDark ? 0.15 : 0.07) * _anim.value,
+          builder: (_, child) {
+            final content = Container(
+              decoration: BoxDecoration(
+                color: cs.surface,
+                borderRadius: radius,
+                border:
+                    widget.useGradientBorder
+                        ? null
+                        : Border.all(
+                          color:
+                              Color.lerp(
+                                cs.outline.withValues(
+                                  alpha: isDark ? 0.25 : 0.55,
+                                ),
+                                cs.primary.withValues(alpha: 0.55),
+                                _anim.value,
+                              )!,
+                          width: 1.0 + (0.5 * _anim.value),
                         ),
-                        blurRadius: 24 * _anim.value,
-                        offset: Offset(0, 8 * _anim.value),
-                      ),
-                    ],
+                boxShadow: [
+                  BoxShadow(
+                    color: cs.primary.withValues(
+                      alpha: (isDark ? 0.15 : 0.07) * _anim.value,
+                    ),
+                    blurRadius: 24 * _anim.value,
+                    offset: Offset(0, 8 * _anim.value),
                   ),
-                  child: child,
-                ),
+                ],
               ),
+              child: child,
+            );
+
+            final lifted = Transform.translate(
+              offset: Offset(0, -4 * _anim.value),
+              child:
+                  widget.useGradientBorder
+                      ? _GradientBorderWrap(
+                        radius: radius,
+                        strength: _anim.value,
+                        child: content,
+                      )
+                      : content,
+            );
+
+            return lifted;
+          },
           child: Padding(padding: widget.padding, child: widget.child),
         ),
+      ),
+    );
+  }
+}
+
+class _GradientBorderWrap extends StatelessWidget {
+  final Widget child;
+  final BorderRadius radius;
+  final double strength;
+
+  const _GradientBorderWrap({
+    required this.child,
+    required this.radius,
+    required this.strength,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: radius,
+        gradient: LinearGradient(
+          colors: [
+            AppColors.primary.withValues(alpha: 0.15 + 0.45 * strength),
+            AppColors.accent.withValues(alpha: 0.15 + 0.45 * strength),
+          ],
+        ),
+      ),
+      padding: const EdgeInsets.all(1.4),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(
+          (radius.topLeft.x - 1.4).clamp(0, radius.topLeft.x),
+        ),
+        child: child,
       ),
     );
   }
