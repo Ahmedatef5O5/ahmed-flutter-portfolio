@@ -345,6 +345,7 @@ class _SocialIconState extends State<_SocialIcon> {
       child: Tooltip(
         message: widget.label,
         child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: () => launchUrl(Uri.parse(widget.url)),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
@@ -395,6 +396,7 @@ class _WhatsAppIconState extends State<_WhatsAppIcon> {
       child: Tooltip(
         message: 'WhatsApp',
         child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap:
               () => launchUrl(
                 Uri.parse(AppStrings.whatsapp),
