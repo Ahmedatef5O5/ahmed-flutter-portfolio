@@ -59,7 +59,7 @@ class _HeroAvatarState extends State<HeroAvatar>
                               colors: [
                                 AppColors.primary,
                                 AppColors.accent,
-                                Color(0x226C63FF),
+                                Color(0x224B3FE0),
                                 AppColors.primary,
                               ],
                               stops: [0.0, 0.35, 0.7, 1.0],

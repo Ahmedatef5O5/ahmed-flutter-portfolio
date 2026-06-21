@@ -21,6 +21,7 @@ class HeroSection extends StatelessWidget {
     final r = Responsive.of(context);
 
     return GridBackground(
+      intensity: 1.4,
       child: Container(
         constraints: const BoxConstraints(minHeight: 600),
         padding: EdgeInsets.symmetric(
