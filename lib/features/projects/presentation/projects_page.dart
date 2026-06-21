@@ -42,7 +42,7 @@ class ProjectsPage extends StatelessWidget {
                         crossAxisCount: cols,
                         mainAxisSpacing: 20,
                         crossAxisSpacing: 20,
-                        childAspectRatio: cols == 2 ? 1.55 : 1.8,
+                        childAspectRatio: cols == 2 ? 1.3 : 1.5,
                       ),
                       itemCount: kProjects.length,
                       itemBuilder:

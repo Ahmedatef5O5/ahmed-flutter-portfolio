@@ -187,6 +187,7 @@ class _FloatingBadgeState extends State<_FloatingBadge>
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
+                color: Color(0xFF54C5F8),
               ),
             ),
           ],
