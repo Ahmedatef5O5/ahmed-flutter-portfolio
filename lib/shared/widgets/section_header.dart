@@ -23,26 +23,28 @@ class SectionHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Pill
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  cs.primary.withValues(alpha: 0.12),
-                  AppColors.accent.withValues(alpha: 0.06),
-                ],
+          Transform.translate(
+            offset: const Offset(-2, 0),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    cs.primary.withValues(alpha: 0.12),
+                    AppColors.accent.withValues(alpha: 0.08),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(100),
+                border: Border.all(color: cs.primary.withValues(alpha: 0.3)),
               ),
-              borderRadius: BorderRadius.circular(100),
-              border: Border.all(color: cs.primary.withValues(alpha: 0.3)),
-            ),
-            child: Text(
-              label.toUpperCase(),
-              style: tt.labelLarge?.copyWith(
-                color: cs.primary,
-                fontSize: 11,
-                letterSpacing: 2,
-                fontWeight: FontWeight.w700,
+              child: Text(
+                label.toUpperCase(),
+                style: tt.labelLarge?.copyWith(
+                  color: cs.primary,
+                  fontSize: 11,
+                  letterSpacing: 2,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ),
@@ -59,8 +61,8 @@ class SectionHeader extends StatelessWidget {
                   width: 48,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(2),
-                    gradient: LinearGradient(
-                      colors: [cs.primary, AppColors.accent],
+                    gradient: const LinearGradient(
+                      colors: AppColors.brandGradient,
                     ),
                   ),
                 ),

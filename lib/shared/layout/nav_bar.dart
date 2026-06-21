@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/responsive/responsive.dart';
+import '../../core/theme/app_colors.dart';
 import '../../core/theme/theme_controller.dart';
 import '../../routing/app_routing.dart';
 
@@ -80,12 +81,18 @@ class _Logo extends StatelessWidget {
       onTap: () => context.go(AppRoutes.home),
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
-        child: Text(
-          'AA.',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.primary,
-            fontWeight: FontWeight.w800,
-            letterSpacing: -0.5,
+        child: ShaderMask(
+          shaderCallback:
+              (bounds) => const LinearGradient(
+                colors: AppColors.brandGradient,
+              ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+          child: Text(
+            'AA.',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -0.5,
+            ),
           ),
         ),
       ),
@@ -137,7 +144,9 @@ class _NavLinkState extends State<_NavLink> {
                 height: 2,
                 width: isActive ? 20 : (_hovered ? 12 : 0),
                 decoration: BoxDecoration(
-                  color: cs.primary,
+                  gradient: const LinearGradient(
+                    colors: AppColors.brandGradient,
+                  ),
                   borderRadius: BorderRadius.circular(1),
                 ),
               ),
