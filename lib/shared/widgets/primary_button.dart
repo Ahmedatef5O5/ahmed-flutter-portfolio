@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 
 enum ButtonVariant { filled, outlined, ghost }
 
@@ -52,13 +53,6 @@ class _PrimaryButtonState extends State<PrimaryButton>
     final isOutlined = widget.variant == ButtonVariant.outlined;
     final isGhost = widget.variant == ButtonVariant.ghost;
 
-    final bgColor =
-        isFilled
-            ? (_hovered ? cs.primary.withValues(alpha: 0.88) : cs.primary)
-            : (_hovered
-                ? cs.primary.withValues(alpha: 0.07)
-                : Colors.transparent);
-
     final fgColor = isFilled ? Colors.white : cs.primary;
 
     final borderColor =
@@ -67,6 +61,13 @@ class _PrimaryButtonState extends State<PrimaryButton>
             : isGhost
             ? cs.outline.withValues(alpha: 0.6)
             : Colors.transparent;
+
+    final flatBg =
+        isFilled
+            ? null
+            : (_hovered
+                ? cs.primary.withValues(alpha: 0.07)
+                : Colors.transparent);
 
     return MouseRegion(
       cursor:
@@ -90,16 +91,25 @@ class _PrimaryButtonState extends State<PrimaryButton>
             curve: Curves.easeOut,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
             decoration: BoxDecoration(
-              color: bgColor,
+              color: flatBg,
+              gradient:
+                  isFilled
+                      ? LinearGradient(
+                        colors:
+                            _hovered
+                                ? [AppColors.primaryDeep, AppColors.primary]
+                                : [AppColors.primary, AppColors.primaryLight],
+                      )
+                      : null,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor, width: 1.2),
               boxShadow:
                   isFilled && _hovered
                       ? [
                         BoxShadow(
-                          color: cs.primary.withValues(alpha: 0.3),
-                          blurRadius: 16,
-                          offset: const Offset(0, 4),
+                          color: cs.primary.withValues(alpha: 0.35),
+                          blurRadius: 18,
+                          offset: const Offset(0, 6),
                         ),
                       ]
                       : [],
