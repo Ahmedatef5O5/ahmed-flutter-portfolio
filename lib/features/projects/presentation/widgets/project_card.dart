@@ -70,9 +70,9 @@ class _ProjectCardState extends State<ProjectCard> {
                     gradient:
                         _hovered
                             ? const LinearGradient(
-                              colors: [AppColors.primary, AppColors.accent],
+                              colors: AppColors.brandGradient,
                             )
-                            : LinearGradient(
+                            : const LinearGradient(
                               colors: [Colors.transparent, Colors.transparent],
                             ),
                   ),
@@ -99,16 +99,16 @@ class _ProjectCardState extends State<ProjectCard> {
                             vertical: 3,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.accent.withValues(alpha: 0.1),
+                            color: AppColors.teal.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(100),
                             border: Border.all(
-                              color: AppColors.accent.withValues(alpha: 0.25),
+                              color: AppColors.teal.withValues(alpha: 0.3),
                             ),
                           ),
                           child: Text(
                             'Featured',
                             style: tt.bodySmall?.copyWith(
-                              color: AppColors.accent,
+                              color: AppColors.teal,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
