@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/animations/fade_slide_animation.dart';
@@ -284,25 +285,33 @@ class _AvailableBadgeState extends State<_AvailableBadge>
 // ─────────────────────────── Social Links ────────────────────────────────────
 
 class _SocialLinks extends StatelessWidget {
-  static const _links = [
-    (icon: Icons.code_rounded, label: 'GitHub', url: AppStrings.github),
-    (icon: Icons.work_rounded, label: 'LinkedIn', url: AppStrings.linkedin),
-    (
-      icon: Icons.email_rounded,
-      label: 'Email',
-      url: 'mailto:${AppStrings.email}',
-    ),
-  ];
+  const _SocialLinks();
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        for (final link in _links) ...[
-          _SocialIcon(icon: link.icon, label: link.label, url: link.url),
-          const SizedBox(width: 8),
-        ],
+        _SocialIcon(
+          icon: FaIcon(FontAwesomeIcons.github).icon!,
+          label: 'GitHub',
+          url: AppStrings.github,
+        ),
+        const SizedBox(width: 8),
+        _SocialIcon(
+          icon: FaIcon(FontAwesomeIcons.linkedin).icon!,
+          label: 'LinkedIn',
+          url: AppStrings.linkedin,
+        ),
+        const SizedBox(width: 8),
+        _SocialIcon(
+          icon: FaIcon(FontAwesomeIcons.envelope).icon!,
+          label: 'Email',
+          url: AppStrings.email,
+        ),
+        const SizedBox(width: 8),
+        // ── WhatsApp ──
+        _WhatsAppIcon(),
       ],
     );
   }
@@ -356,6 +365,61 @@ class _SocialIconState extends State<_SocialIcon> {
               widget.icon,
               size: 20,
               color: _hovered ? cs.primary : cs.onSurfaceVariant,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _WhatsAppIcon extends StatefulWidget {
+  const _WhatsAppIcon();
+
+  @override
+  State<_WhatsAppIcon> createState() => _WhatsAppIconState();
+}
+
+class _WhatsAppIconState extends State<_WhatsAppIcon> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    const waGreen = Color(0xFF25D366);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      cursor: SystemMouseCursors.click,
+      child: Tooltip(
+        message: 'WhatsApp',
+        child: GestureDetector(
+          onTap:
+              () => launchUrl(
+                Uri.parse(AppStrings.whatsapp),
+                mode: LaunchMode.externalApplication,
+              ),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color:
+                  _hovered
+                      ? waGreen.withValues(alpha: 0.15)
+                      : cs.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: _hovered ? waGreen.withValues(alpha: 0.5) : cs.outline,
+              ),
+            ),
+            child: Center(
+              child: FaIcon(
+                FontAwesomeIcons.whatsapp,
+                size: 20,
+                color: _hovered ? waGreen : cs.onSurfaceVariant,
+              ),
             ),
           ),
         ),
