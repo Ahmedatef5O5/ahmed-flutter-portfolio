@@ -59,34 +59,62 @@ class _ProjectCardState extends State<ProjectCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header row: title + featured badge
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(widget.project.title, style: tt.titleLarge),
+                // Gradient accent top bar (يظهر عند hover)
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 220),
+                  height: 3,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(19),
                     ),
-                    if (widget.project.isFeatured)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 3,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.accent.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(100),
-                          border: Border.all(
-                            color: AppColors.accent.withValues(alpha: 0.3),
-                          ),
-                        ),
-                        child: Text(
-                          'Featured',
-                          style: tt.bodySmall?.copyWith(
-                            color: AppColors.accent,
-                            fontWeight: FontWeight.w600,
-                          ),
+                    gradient:
+                        _hovered
+                            ? const LinearGradient(
+                              colors: [AppColors.primary, AppColors.accent],
+                            )
+                            : LinearGradient(
+                              colors: [Colors.transparent, Colors.transparent],
+                            ),
+                  ),
+                ),
+                // Project number
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                  child: Row(
+                    children: [
+                      Text(
+                        '0${widget.index + 1}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: cs.primary.withValues(alpha: 0.4),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
+                          letterSpacing: 1,
                         ),
                       ),
-                  ],
+                      const Spacer(),
+                      if (widget.project.isFeatured)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.accent.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(100),
+                            border: Border.all(
+                              color: AppColors.accent.withValues(alpha: 0.25),
+                            ),
+                          ),
+                          child: Text(
+                            'Featured',
+                            style: tt.bodySmall?.copyWith(
+                              color: AppColors.accent,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 10),
 
