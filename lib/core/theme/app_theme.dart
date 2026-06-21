@@ -4,65 +4,58 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 abstract class AppTheme {
-  static ThemeData light() {
-    final base = ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.light,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
-        brightness: Brightness.light,
-        surface: AppColors.lightSurface,
-        onSurface: AppColors.lightText,
-      ).copyWith(
-        primary: AppColors.primary,
-        secondary: AppColors.accent,
-        surface: AppColors.lightSurface,
-        surfaceContainerHighest: AppColors.lightSurfaceVariant,
-        onSurface: AppColors.lightText,
-        onSurfaceVariant: AppColors.lightTextSecondary,
-        outline: AppColors.lightBorder,
-      ),
-      scaffoldBackgroundColor: AppColors.lightBackground,
-      textTheme: _buildTextTheme(AppColors.lightText),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-      ),
-      cardTheme: CardThemeData(
-        elevation: 0,
-        color: AppColors.lightSurface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppColors.lightBorder),
-        ),
-      ),
-      dividerColor: AppColors.lightBorder,
-      pageTransitionsTheme: _noTransitions(),
-    );
-    return base;
-  }
+  static ThemeData light() => _build(
+    brightness: Brightness.light,
+    surface: AppColors.lightSurface,
+    surfaceVariant: AppColors.lightSurfaceVariant,
+    background: AppColors.lightBackground,
+    text: AppColors.lightText,
+    textSecondary: AppColors.lightTextSecondary,
+    border: AppColors.lightBorder,
+    primary: AppColors.primary,
+  );
 
-  static ThemeData dark() {
+  static ThemeData dark() => _build(
+    brightness: Brightness.dark,
+    surface: AppColors.darkSurface,
+    surfaceVariant: AppColors.darkSurfaceVariant,
+    background: AppColors.darkBackground,
+    text: AppColors.darkText,
+    textSecondary: AppColors.darkTextSecondary,
+    border: AppColors.darkBorder,
+    primary: AppColors.primaryLight,
+  );
+
+  static ThemeData _build({
+    required Brightness brightness,
+    required Color surface,
+    required Color surfaceVariant,
+    required Color background,
+    required Color text,
+    required Color textSecondary,
+    required Color border,
+    required Color primary,
+  }) {
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: brightness,
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primary,
-        brightness: Brightness.dark,
-        surface: AppColors.darkSurface,
-        onSurface: AppColors.darkText,
+        brightness: brightness,
+        surface: surface,
+        onSurface: text,
       ).copyWith(
-        primary: AppColors.primaryLight,
+        primary: primary,
         secondary: AppColors.accent,
-        surface: AppColors.darkSurface,
-        surfaceContainerHighest: AppColors.darkSurfaceVariant,
-        onSurface: AppColors.darkText,
-        onSurfaceVariant: AppColors.darkTextSecondary,
-        outline: AppColors.darkBorder,
+        tertiary: AppColors.teal,
+        surface: surface,
+        surfaceContainerHighest: surfaceVariant,
+        onSurface: text,
+        onSurfaceVariant: textSecondary,
+        outline: border,
       ),
-      scaffoldBackgroundColor: AppColors.darkBackground,
-      textTheme: _buildTextTheme(AppColors.darkText),
+      scaffoldBackgroundColor: background,
+      textTheme: _buildTextTheme(text),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -70,41 +63,45 @@ abstract class AppTheme {
       ),
       cardTheme: CardThemeData(
         elevation: 0,
-        color: AppColors.darkSurface,
+        color: surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppColors.darkBorder),
+          side: BorderSide(color: border),
         ),
       ),
-      dividerColor: AppColors.darkBorder,
+      dividerColor: border,
       pageTransitionsTheme: _noTransitions(),
+      splashFactory: NoSplash.splashFactory,
     );
   }
 
   static TextTheme _buildTextTheme(Color textColor) {
-    return GoogleFonts.interTextTheme().copyWith(
-      displayLarge: GoogleFonts.inter(
+    final display = GoogleFonts.spaceGroteskTextTheme();
+    final body = GoogleFonts.interTextTheme();
+
+    return body.copyWith(
+      displayLarge: display.displayLarge?.copyWith(
         fontSize: 72,
-        fontWeight: FontWeight.w800,
-        letterSpacing: -2,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -2.2,
         color: textColor,
-        height: 1.1,
+        height: 1.05,
       ),
-      displayMedium: GoogleFonts.inter(
+      displayMedium: display.displayMedium?.copyWith(
         fontSize: 48,
         fontWeight: FontWeight.w700,
         letterSpacing: -1.5,
         color: textColor,
-        height: 1.2,
+        height: 1.1,
       ),
-      displaySmall: GoogleFonts.inter(
+      displaySmall: display.displaySmall?.copyWith(
         fontSize: 36,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         letterSpacing: -1,
         color: textColor,
-        height: 1.2,
+        height: 1.15,
       ),
-      headlineLarge: GoogleFonts.inter(
+      headlineLarge: display.headlineLarge?.copyWith(
         fontSize: 28,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.5,
@@ -134,7 +131,6 @@ abstract class AppTheme {
     );
   }
 
-  // Disable default Material page transitions — go_router handles ours
   static PageTransitionsTheme _noTransitions() {
     return const PageTransitionsTheme(
       builders: {
