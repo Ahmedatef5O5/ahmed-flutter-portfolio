@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../features/home/presentation/about_page.dart';
+import '../features/about/presentation/about_page.dart';
 import '../features/home/presentation/home_page.dart';
 import '../features/contact/presentation/contact_page.dart';
 import '../features/projects/presentation/projects_page.dart';
@@ -22,34 +22,40 @@ final GoRouter appRouter = GoRouter(
       routes: [
         GoRoute(
           path: AppRoutes.home,
-          pageBuilder: (context, state) => _fade(const HomePage()),
+          pageBuilder: (context, state) => _fadeThroughSlide(const HomePage()),
         ),
         GoRoute(
           path: AppRoutes.about,
-          pageBuilder: (context, state) => _fade(const AboutPage()),
+          pageBuilder: (context, state) => _fadeThroughSlide(const AboutPage()),
         ),
         GoRoute(
           path: AppRoutes.projects,
-          pageBuilder: (context, state) => _fade(const ProjectsPage()),
+          pageBuilder:
+              (context, state) => _fadeThroughSlide(const ProjectsPage()),
         ),
         GoRoute(
           path: AppRoutes.contact,
-          pageBuilder: (context, state) => _fade(const ContactPage()),
+          pageBuilder:
+              (context, state) => _fadeThroughSlide(const ContactPage()),
         ),
       ],
     ),
   ],
 );
 
-CustomTransitionPage<void> _fade(Widget child) {
+CustomTransitionPage<void> _fadeThroughSlide(Widget child) {
   return CustomTransitionPage<void>(
     child: child,
     transitionsBuilder: (context, animation, _, child) {
+      final curved = CurvedAnimation(parent: animation, curve: Curves.easeOut);
       return FadeTransition(
-        opacity: CurveTween(curve: Curves.easeInOut).animate(animation),
-        child: child,
+        opacity: curved,
+        child: Transform.translate(
+          offset: Offset(0, 8 * (1 - curved.value)),
+          child: child,
+        ),
       );
     },
-    transitionDuration: const Duration(milliseconds: 300),
+    transitionDuration: const Duration(milliseconds: 320),
   );
 }
