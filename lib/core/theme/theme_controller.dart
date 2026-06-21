@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,7 +11,12 @@ class ThemeController extends ChangeNotifier {
   ThemeController(this._mode);
 
   ThemeMode get mode => _mode;
-  bool get isDark => _mode == ThemeMode.dark;
+  bool get isDark {
+    if (_mode == ThemeMode.system) {
+      return PlatformDispatcher.instance.platformBrightness == Brightness.dark;
+    }
+    return _mode == ThemeMode.dark;
+  }
 
   static Future<ThemeController> init() async {
     final prefs = await SharedPreferences.getInstance();

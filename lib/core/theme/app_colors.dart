@@ -34,4 +34,12 @@ abstract class AppColors {
   // ── Gradient presets ──────────────────────────────────────────────────
   static const List<Color> brandGradient = [primary, accent];
   static const List<Color> coolGradient = [primary, teal];
+
+  static Color glowPrimary(bool isDark) =>
+      primary.withValues(alpha: isDark ? 0.22 : 0.14);
+  static Color glowAccent(bool isDark) =>
+      accent.withValues(alpha: isDark ? 0.18 : 0.10);
+
+  static const Color ambientShadowDark = Color(0xFF03020A);
+  static const Color ambientShadowLight = Color(0xFF2A2750);
 }

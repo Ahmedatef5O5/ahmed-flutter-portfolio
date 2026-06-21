@@ -13,6 +13,7 @@ abstract class AppTheme {
     textSecondary: AppColors.lightTextSecondary,
     border: AppColors.lightBorder,
     primary: AppColors.primary,
+    shadow: AppColors.ambientShadowLight,
   );
 
   static ThemeData dark() => _build(
@@ -24,6 +25,7 @@ abstract class AppTheme {
     textSecondary: AppColors.darkTextSecondary,
     border: AppColors.darkBorder,
     primary: AppColors.primaryLight,
+    shadow: AppColors.ambientShadowDark,
   );
 
   static ThemeData _build({
@@ -35,6 +37,7 @@ abstract class AppTheme {
     required Color textSecondary,
     required Color border,
     required Color primary,
+    required Color shadow,
   }) {
     return ThemeData(
       useMaterial3: true,
@@ -44,6 +47,7 @@ abstract class AppTheme {
         brightness: brightness,
         surface: surface,
         onSurface: text,
+        shadow: shadow,
       ).copyWith(
         primary: primary,
         secondary: AppColors.accent,
@@ -53,6 +57,7 @@ abstract class AppTheme {
         onSurface: text,
         onSurfaceVariant: textSecondary,
         outline: border,
+        shadow: shadow,
       ),
       scaffoldBackgroundColor: background,
       textTheme: _buildTextTheme(text),
@@ -64,6 +69,7 @@ abstract class AppTheme {
       cardTheme: CardThemeData(
         elevation: 0,
         color: surface,
+        shadowColor: shadow.withValues(alpha: 0.25),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(color: border),
