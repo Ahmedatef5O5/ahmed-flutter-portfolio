@@ -35,6 +35,19 @@ class ProjectsPage extends StatelessWidget {
                 LayoutBuilder(
                   builder: (ctx, constraints) {
                     final cols = constraints.maxWidth > 800 ? 2 : 1;
+
+                    if (cols == 1) {
+                      return Column(
+                        children: [
+                          for (int i = 0; i < kProjects.length; i++) ...[
+                            ProjectCard(project: kProjects[i], index: i),
+                            if (i != kProjects.length - 1)
+                              const SizedBox(height: 20),
+                          ],
+                        ],
+                      );
+                    }
+
                     return GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -42,7 +55,7 @@ class ProjectsPage extends StatelessWidget {
                         crossAxisCount: cols,
                         mainAxisSpacing: 20,
                         crossAxisSpacing: 20,
-                        childAspectRatio: cols == 2 ? 1.3 : 1.5,
+                        childAspectRatio: 1.3,
                       ),
                       itemCount: kProjects.length,
                       itemBuilder:
