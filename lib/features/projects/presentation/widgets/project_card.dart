@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'dart:math' as math;
+import 'package:flutter/material.dart';
+import 'package:ahmed_portfolio/features/projects/presentation/widgets/project_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/animations/scroll_reveal.dart';
 import '../../../../features/projects/data/projects_data.dart';
+import '../../../../shared/widgets/learn_more_button.dart';
 
 class ProjectCard extends StatefulWidget {
   final ProjectModel project;
@@ -92,7 +94,6 @@ class _ProjectCardState extends State<ProjectCard>
             borderRadius: BorderRadius.circular(24),
             child: Stack(
               children: [
-                // ── Background gradient ──────────────────────────
                 Positioned.fill(
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 280),
@@ -169,11 +170,9 @@ class _ProjectCardState extends State<ProjectCard>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Top row: Icon + Featured badge
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Animated app icon
                           AnimatedBuilder(
                             animation: _iconController,
                             builder:
@@ -181,29 +180,9 @@ class _ProjectCardState extends State<ProjectCard>
                                   scale: _iconScale.value,
                                   child: Transform.rotate(
                                     angle: _iconRotate.value * math.pi,
-                                    child: Container(
-                                      width: 52,
-                                      height: 52,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [g[0], g[1]],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ),
-                                        borderRadius: BorderRadius.circular(14),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: g[0].withValues(alpha: 0.4),
-                                            blurRadius: 12,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Icon(
-                                        widget.project.appIcon,
-                                        color: Colors.white,
-                                        size: 26,
-                                      ),
+                                    child: projectIcon(
+                                      widget.project.id,
+                                      size: 52,
                                     ),
                                   ),
                                 ),
@@ -290,7 +269,6 @@ class _ProjectCardState extends State<ProjectCard>
                       ),
                       const SizedBox(height: 18),
 
-                      // Action buttons
                       Row(
                         children: [
                           if (widget.project.githubUrl != null)
@@ -319,6 +297,11 @@ class _ProjectCardState extends State<ProjectCard>
                               accentColor: g[0],
                             ),
                           ],
+                          Spacer(),
+                          LearnMoreButton(
+                            projectId: widget.project.id,
+                            accentColor: g[0],
+                          ),
                         ],
                       ),
                     ],
