@@ -26,6 +26,7 @@ class _ScrollRevealState extends State<ScrollReveal>
   late final AnimationController _controller;
   late final Animation<double> _opacity;
   late final Animation<Offset> _slide;
+  late final Animation<double> _scale;
   bool _triggered = false;
 
   @override
@@ -41,6 +42,11 @@ class _ScrollRevealState extends State<ScrollReveal>
     _slide = Tween<Offset>(
       begin: Offset(0, widget.slideOffset),
       end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+
+    _scale = Tween<double>(
+      begin: 0.94,
+      end: 1.0,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
   }
 
@@ -69,7 +75,10 @@ class _ScrollRevealState extends State<ScrollReveal>
         builder:
             (_, child) => FadeTransition(
               opacity: _opacity,
-              child: Transform.translate(offset: _slide.value, child: child),
+              child: Transform.translate(
+                offset: _slide.value,
+                child: Transform.scale(scale: _scale.value, child: child),
+              ),
             ),
         child: widget.child,
       ),

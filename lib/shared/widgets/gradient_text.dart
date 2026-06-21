@@ -10,7 +10,7 @@ class GradientText extends StatelessWidget {
     this.text, {
     super.key,
     this.style,
-    this.colors = const [AppColors.primary, AppColors.accent],
+    this.colors = AppColors.brandGradient,
   });
 
   @override
