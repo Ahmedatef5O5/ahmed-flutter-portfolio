@@ -14,6 +14,7 @@ class AboutPage extends StatelessWidget {
     final padding = r.value(mobile: 20.0, desktop: 60.0);
 
     return SingleChildScrollView(
+      primary: true,
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: AppSizes.maxContentWidth),
