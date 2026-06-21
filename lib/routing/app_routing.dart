@@ -24,22 +24,22 @@ final GoRouter appRouter = GoRouter(
       routes: [
         GoRoute(
           path: AppRoutes.home,
-          pageBuilder: (context, state) => _fadeThroughSlide(const HomePage()),
+          pageBuilder: (context, state) => _fadeScale(state, const HomePage()),
         ),
         GoRoute(
           path: AppRoutes.about,
-          pageBuilder: (context, state) => _fadeThroughSlide(const AboutPage()),
+          pageBuilder: (context, state) => _fadeScale(state, const AboutPage()),
         ),
         GoRoute(
           path: AppRoutes.projects,
           pageBuilder:
-              (context, state) => _fadeThroughSlide(const ProjectsPage()),
+              (context, state) => _fadeScale(state, const ProjectsPage()),
           routes: [
             GoRoute(
               path: ':id',
               pageBuilder: (context, state) {
                 final id = state.pathParameters['id'] ?? '';
-                return _fadeThroughSlide(ProjectDetailPage(projectId: id));
+                return _fadeScale(state, ProjectDetailPage(projectId: id));
               },
             ),
           ],
@@ -47,26 +47,32 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: AppRoutes.contact,
           pageBuilder:
-              (context, state) => _fadeThroughSlide(const ContactPage()),
+              (context, state) => _fadeScale(state, const ContactPage()),
         ),
       ],
     ),
   ],
 );
 
-CustomTransitionPage<void> _fadeThroughSlide(Widget child) {
+CustomTransitionPage<void> _fadeScale(GoRouterState state, Widget child) {
   return CustomTransitionPage<void>(
+    key: state.pageKey,
+    name: state.name,
     child: child,
     transitionsBuilder: (context, animation, _, child) {
-      final curved = CurvedAnimation(parent: animation, curve: Curves.easeOut);
+      final curved = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOutCubic,
+      );
       return FadeTransition(
         opacity: curved,
-        child: Transform.translate(
-          offset: Offset(0, 8 * (1 - curved.value)),
+        child: Transform.scale(
+          scale: 0.98 + (0.02 * curved.value),
           child: child,
         ),
       );
     },
-    transitionDuration: const Duration(milliseconds: 320),
+    transitionDuration: const Duration(milliseconds: 380),
+    reverseTransitionDuration: const Duration(milliseconds: 280),
   );
 }
