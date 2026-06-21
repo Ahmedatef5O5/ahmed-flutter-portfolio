@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/animations/scroll_reveal.dart';
 import '../../../core/constants/app_sizes.dart';
@@ -70,44 +71,147 @@ class _MobileContactLayout extends StatelessWidget {
 }
 
 class _ContactLinks extends StatelessWidget {
-  static const _items = [
-    (
-      icon: Icons.email_rounded,
-      label: 'Email',
-      value: AppStrings.email,
-      url: 'mailto:${AppStrings.email}',
-    ),
-    (
-      icon: Icons.code_rounded,
-      label: 'GitHub',
-      value: 'github.com/Ahmedatef5O5',
-      url: AppStrings.github,
-    ),
-    (
-      icon: Icons.work_outline_rounded,
-      label: 'LinkedIn',
-      value: 'linkedin.com/in/ahmed-atef',
-      url: AppStrings.linkedin,
-    ),
-  ];
+  const _ContactLinks();
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        for (final item in _items)
-          ScrollReveal(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: _ContactRow(
-                icon: item.icon,
-                label: item.label,
-                value: item.value,
-                url: item.url,
+        ScrollReveal(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: _ContactRow(
+              icon: FaIcon(FontAwesomeIcons.envelope).icon!,
+              label: 'Email',
+              value: 'ahmedatef0@gmail.com',
+              url: AppStrings.email,
+            ),
+          ),
+        ),
+        ScrollReveal(
+          delay: const Duration(milliseconds: 60),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: _ContactRow(
+              icon: FaIcon(FontAwesomeIcons.github).icon!,
+              label: 'GitHub',
+              value: 'github.com/Ahmedatef5O5',
+              url: AppStrings.github,
+            ),
+          ),
+        ),
+        ScrollReveal(
+          delay: const Duration(milliseconds: 120),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: _ContactRow(
+              icon: FaIcon(FontAwesomeIcons.linkedin).icon!,
+              label: 'LinkedIn',
+              value: 'linkedin.com/in/ahmed-atef',
+              url: AppStrings.linkedin,
+            ),
+          ),
+        ),
+        // ── WhatsApp ──────────────────────────────────
+        ScrollReveal(
+          delay: const Duration(milliseconds: 180),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: _WhatsAppRow(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _WhatsAppRow extends StatefulWidget {
+  const _WhatsAppRow();
+
+  @override
+  State<_WhatsAppRow> createState() => _WhatsAppRowState();
+}
+
+class _WhatsAppRowState extends State<_WhatsAppRow> {
+  bool _copied = false;
+
+  Future<void> _copyToClipboard() async {
+    await Clipboard.setData(const ClipboardData(text: '+201550835238'));
+    setState(() => _copied = true);
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) setState(() => _copied = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+
+    return HoverCard(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      onTap:
+          () => launchUrl(
+            Uri.parse(AppStrings.whatsapp),
+            mode: LaunchMode.externalApplication,
+          ),
+      child: Row(
+        children: [
+          // WhatsApp icon بالـ gradient الأخضر
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: const Color(0xFF25D366).withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Center(
+              child: FaIcon(
+                FontAwesomeIcons.whatsapp,
+                size: 22,
+                color: Color(0xFF25D366),
               ),
             ),
           ),
-      ],
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'WhatsApp',
+                  style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '+20 155 083 5238',
+                  style: tt.titleLarge?.copyWith(fontSize: 15),
+                ),
+              ],
+            ),
+          ),
+          // Copy button
+          Tooltip(
+            message: _copied ? 'Copied!' : 'Copy',
+            child: IconButton(
+              onPressed: _copyToClipboard,
+              icon: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child: Icon(
+                  _copied ? Icons.check_circle_rounded : Icons.copy_rounded,
+                  key: ValueKey(_copied),
+                  size: 18,
+                  color: _copied ? AppColors.success : cs.onSurfaceVariant,
+                ),
+              ),
+            ),
+          ),
+          Icon(
+            Icons.arrow_forward_ios_rounded,
+            size: 14,
+            color: cs.onSurfaceVariant.withValues(alpha: 0.4),
+          ),
+        ],
+      ),
     );
   }
 }
