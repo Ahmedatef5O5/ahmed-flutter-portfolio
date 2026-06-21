@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../core/animations/scroll_notifier.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/responsive/responsive.dart';
@@ -9,7 +10,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/theme_controller.dart';
 import '../../routing/app_routing.dart';
 
-class NavBar extends StatelessWidget {
+class NavBar extends StatefulWidget {
   const NavBar({super.key});
 
   static const _navItems = [
@@ -20,6 +21,31 @@ class NavBar extends StatelessWidget {
   ];
 
   @override
+  State<NavBar> createState() => _NavBarState();
+}
+
+class _NavBarState extends State<NavBar> {
+  bool _scrolled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    navScrolled.addListener(_onScrollChange);
+  }
+
+  void _onScrollChange() {
+    if (_scrolled != navScrolled.value) {
+      setState(() => _scrolled = navScrolled.value);
+    }
+  }
+
+  @override
+  void dispose() {
+    navScrolled.removeListener(_onScrollChange);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final r = Responsive.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -28,19 +54,47 @@ class NavBar extends StatelessWidget {
     return RepaintBoundary(
       child: ClipRect(
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             height: AppSizes.navHeight,
             decoration: BoxDecoration(
-              // Glass effect
-              color: cs.surface.withValues(alpha: isDark ? 0.7 : 0.8),
+              color: cs.surface.withValues(
+                alpha:
+                    _scrolled ? (isDark ? 0.72 : 0.85) : (isDark ? 0.32 : 0.5),
+              ),
               border: Border(
                 bottom: BorderSide(
-                  color: cs.outline.withValues(alpha: isDark ? 0.2 : 0.35),
+                  color: cs.outline.withValues(
+                    alpha:
+                        _scrolled
+                            ? (isDark ? 0.35 : 0.5)
+                            : (isDark ? 0.15 : 0.3),
+                  ),
                   width: 0.5,
                 ),
               ),
+              boxShadow:
+                  _scrolled
+                      ? [
+                        BoxShadow(
+                          color: cs.shadow.withValues(
+                            alpha: isDark ? 0.55 : 0.18,
+                          ),
+                          blurRadius: 40,
+                          spreadRadius: -4,
+                          offset: const Offset(0, 12),
+                        ),
+                      ]
+                      : [
+                        BoxShadow(
+                          color: cs.shadow.withValues(
+                            alpha: isDark ? 0.25 : 0.06,
+                          ),
+                          blurRadius: 24,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
             ),
             child: Center(
               child: ConstrainedBox(
@@ -56,7 +110,7 @@ class NavBar extends StatelessWidget {
                       _Logo(),
                       const Spacer(),
                       if (r.isDesktop) ...[
-                        for (final item in _navItems)
+                        for (final item in NavBar._navItems)
                           _NavLink(label: item.label, route: item.route),
                         const SizedBox(width: 16),
                       ],
@@ -74,24 +128,55 @@ class NavBar extends StatelessWidget {
   }
 }
 
-class _Logo extends StatelessWidget {
+class _Logo extends StatefulWidget {
+  @override
+  State<_Logo> createState() => _LogoState();
+}
+
+class _LogoState extends State<_Logo> {
+  bool _hovered = false;
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => context.go(AppRoutes.home),
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: ShaderMask(
-          shaderCallback:
-              (bounds) => const LinearGradient(
-                colors: AppColors.brandGradient,
-              ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-          child: Text(
-            'AA.',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -0.5,
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: () => context.go(AppRoutes.home),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            gradient: LinearGradient(
+              colors:
+                  AppColors.brandGradient
+                      .map((c) => c.withValues(alpha: _hovered ? 0.2 : 0.12))
+                      .toList(),
+            ),
+            border: Border.all(
+              color: AppColors.brandGradient.first.withValues(
+                alpha: _hovered ? 0.6 : 0.3,
+              ),
+              width: 1,
+            ),
+          ),
+          child: ShaderMask(
+            shaderCallback:
+                (bounds) => const LinearGradient(
+                  colors: AppColors.brandGradient,
+                ).createShader(
+                  Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                ),
+            child: Text(
+              'AA',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.5,
+                fontSize: 16,
+              ),
             ),
           ),
         ),
@@ -188,54 +273,8 @@ class _MobileMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      onPressed: () => _showMobileMenu(context),
+      onPressed: () => Scaffold.of(context).openEndDrawer(),
       icon: const Icon(Icons.menu_rounded, size: 22),
-    );
-  }
-
-  void _showMobileMenu(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: cs.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => _MobileMenu(),
-    );
-  }
-}
-
-class _MobileMenu extends StatelessWidget {
-  static const _navItems = [
-    (label: AppStrings.navHome, route: AppRoutes.home),
-    (label: AppStrings.navAbout, route: AppRoutes.about),
-    (label: AppStrings.navProjects, route: AppRoutes.projects),
-    (label: AppStrings.navContact, route: AppRoutes.contact),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final item in _navItems)
-              ListTile(
-                title: Text(
-                  item.label,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  context.go(item.route);
-                },
-              ),
-          ],
-        ),
-      ),
     );
   }
 }
