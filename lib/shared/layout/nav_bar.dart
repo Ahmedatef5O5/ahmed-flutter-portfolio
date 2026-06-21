@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -24,43 +25,45 @@ class NavBar extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
 
     return RepaintBoundary(
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        height: AppSizes.navHeight,
-        decoration: BoxDecoration(
-          color: cs.surface.withValues(alpha: 0.9),
-          border: Border(
-            bottom: BorderSide(
-              color: cs.outline.withValues(alpha: 0.5),
-              width: 0.5,
-            ),
-          ),
-        ),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: AppSizes.maxContentWidth,
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: r.value(mobile: 16.0, desktop: 32.0),
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            height: AppSizes.navHeight,
+            decoration: BoxDecoration(
+              // Glass effect
+              color: cs.surface.withValues(alpha: isDark ? 0.7 : 0.8),
+              border: Border(
+                bottom: BorderSide(
+                  color: cs.outline.withValues(alpha: isDark ? 0.2 : 0.35),
+                  width: 0.5,
+                ),
               ),
-              child: Row(
-                children: [
-                  // Logo / Name
-                  _Logo(),
-                  const Spacer(),
-                  // Desktop nav links
-                  if (r.isDesktop) ...[
-                    for (final item in _navItems)
-                      _NavLink(label: item.label, route: item.route),
-                    const SizedBox(width: 16),
-                  ],
-                  // Theme toggle
-                  _ThemeToggle(),
-                  // Mobile menu
-                  if (!r.isDesktop) _MobileMenuButton(),
-                ],
+            ),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: AppSizes.maxContentWidth,
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: r.value(mobile: 16.0, desktop: 32.0),
+                  ),
+                  child: Row(
+                    children: [
+                      _Logo(),
+                      const Spacer(),
+                      if (r.isDesktop) ...[
+                        for (final item in _navItems)
+                          _NavLink(label: item.label, route: item.route),
+                        const SizedBox(width: 16),
+                      ],
+                      _ThemeToggle(),
+                      if (!r.isDesktop) _MobileMenuButton(),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
