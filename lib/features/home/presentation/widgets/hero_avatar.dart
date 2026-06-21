@@ -1,19 +1,41 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../core/animations/fade_slide_animation.dart';
 import '../../../../core/theme/app_colors.dart';
 
-class HeroAvatar extends StatelessWidget {
+class HeroAvatar extends StatefulWidget {
   const HeroAvatar({super.key});
+
+  @override
+  State<HeroAvatar> createState() => _HeroAvatarState();
+}
+
+class _HeroAvatarState extends State<HeroAvatar>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _rotCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _rotCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 8),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _rotCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final imageProvider = const AssetImage('assets/images/avatar.jpg');
-    // ignore: unnecessary_null_comparison
-    final bool hasImage = imageProvider != null;
+    final bg = Theme.of(context).scaffoldBackgroundColor;
 
     return FadeSlideAnimation(
-      delay: const Duration(milliseconds: 400),
+      delay: const Duration(milliseconds: 350),
       child: Center(
         child: SizedBox(
           width: 300,
@@ -21,78 +43,75 @@ class HeroAvatar extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              Container(
-                width: 290,
-                height: 290,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: SweepGradient(
-                    colors: [
-                      AppColors.primary.withValues(alpha: 0.6),
-                      AppColors.accent.withValues(alpha: 0.4),
-                      AppColors.primary.withValues(alpha: 0.1),
-                      AppColors.primary.withValues(alpha: 0.6),
-                    ],
-                  ),
+              // Rotating gradient ring
+              RepaintBoundary(
+                child: AnimatedBuilder(
+                  animation: _rotCtrl,
+                  builder:
+                      (_, __) => Transform.rotate(
+                        angle: _rotCtrl.value * 2 * math.pi,
+                        child: Container(
+                          width: 292,
+                          height: 292,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: SweepGradient(
+                              colors: [
+                                AppColors.primary,
+                                AppColors.accent,
+                                Color(0x226C63FF),
+                                AppColors.primary,
+                              ],
+                              stops: [0.0, 0.35, 0.7, 1.0],
+                            ),
+                          ),
+                        ),
+                      ),
                 ),
               ),
-              // White spacer
+              // Mask ring (background color)
               Container(
-                width: 278,
-                height: 278,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: cs.surface,
-                ),
+                width: 280,
+                height: 280,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: bg),
               ),
+              // Photo circle
               Container(
-                width: 262,
-                height: 262,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: cs.surfaceContainerHighest,
-                  image:
-                      hasImage
-                          ? DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                          )
-                          : null,
-                ),
-                child:
-                    hasImage
-                        ? null
-                        : Column(
+                width: 266,
+                height: 266,
+                clipBehavior: Clip.antiAlias,
+                decoration: const BoxDecoration(shape: BoxShape.circle),
+                child: Image.asset(
+                  'assets/images/avatar.jpg',
+                  fit: BoxFit.cover,
+                  errorBuilder:
+                      (_, __, ___) => Container(
+                        color: cs.surfaceContainerHighest,
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.person_rounded,
                               size: 80,
-                              color: cs.primary.withValues(alpha: 0.4),
+                              color: cs.primary.withValues(alpha: 0.35),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 6),
                             Text(
-                              'Your Photo Here',
-                              style: Theme.of(
-                                context,
-                              ).textTheme.bodySmall?.copyWith(
+                              'Add avatar.jpg',
+                              style: TextStyle(
                                 color: cs.onSurfaceVariant.withValues(
-                                  alpha: 0.5,
+                                  alpha: 0.4,
                                 ),
+                                fontSize: 11,
                               ),
                             ),
                           ],
                         ),
-              ),
-              Positioned(
-                bottom: 20,
-                right: 10,
-                child: _FloatingBadge(
-                  icon: Icons.flutter_dash_rounded,
-                  label: 'Flutter Dev',
-                  color: const Color(0xFF54C5F8),
+                      ),
                 ),
               ),
+              // Flutter Dev badge
+              Positioned(bottom: 14, right: 4, child: _FloatingBadge()),
             ],
           ),
         ),
@@ -101,47 +120,77 @@ class HeroAvatar extends StatelessWidget {
   }
 }
 
-class _FloatingBadge extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-  const _FloatingBadge({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
+class _FloatingBadge extends StatefulWidget {
+  @override
+  State<_FloatingBadge> createState() => _FloatingBadgeState();
+}
+
+class _FloatingBadgeState extends State<_FloatingBadge>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _float;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2400),
+    )..repeat(reverse: true);
+    _float = Tween<double>(
+      begin: -3,
+      end: 3,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(100),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+    final cs = Theme.of(context).colorScheme;
+    return AnimatedBuilder(
+      animation: _float,
+      builder:
+          (_, child) => Transform.translate(
+            offset: Offset(0, _float.value),
+            child: child,
           ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: color),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.onSurface,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: cs.surface,
+          borderRadius: BorderRadius.circular(100),
+          border: Border.all(color: cs.outline.withValues(alpha: 0.4)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
             ),
-          ),
-        ],
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.flutter_dash_rounded,
+              size: 16,
+              color: Color(0xFF54C5F8),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              'Flutter Dev',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

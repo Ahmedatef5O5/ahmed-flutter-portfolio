@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/animations/fade_slide_animation.dart';
+import '../../../../core/animations/type_writer_text.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/grid_background.dart';
 import '../../../../routing/app_routing.dart';
 import '../../../../shared/widgets/gradient_text.dart';
 import '../../../../shared/widgets/primary_button.dart';
@@ -18,16 +20,20 @@ class HeroSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final r = Responsive.of(context);
 
-    return Container(
-      constraints: const BoxConstraints(minHeight: 600),
-      padding: EdgeInsets.symmetric(
-        horizontal: r.value(mobile: 20.0, desktop: 60.0),
-        vertical: r.value(mobile: 48.0, desktop: 80.0),
-      ),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: AppSizes.maxContentWidth),
-          child: r.isDesktop ? _DesktopLayout() : _MobileLayout(),
+    return GridBackground(
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 600),
+        padding: EdgeInsets.symmetric(
+          horizontal: r.value(mobile: 20.0, desktop: 60.0),
+          vertical: r.value(mobile: 48.0, desktop: 80.0),
+        ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppSizes.maxContentWidth,
+            ),
+            child: r.isDesktop ? _DesktopLayout() : _MobileLayout(),
+          ),
         ),
       ),
     );
@@ -110,11 +116,15 @@ class _HeroContent extends StatelessWidget {
         ),
         const SizedBox(height: 8),
 
-        // Title typewriter-style (static for performance)
         FadeSlideAnimation(
           delay: const Duration(milliseconds: 400),
-          child: Text(
-            AppStrings.title,
+          child: TypewriterText(
+            texts: const [
+              'Flutter Developer',
+              'Mobile Engineer',
+              'Clean Code Advocate',
+              'UI/UX Enthusiast',
+            ],
             style: tt.displaySmall?.copyWith(
               color: cs.onSurfaceVariant,
               fontSize: r.value(mobile: 22.0, desktop: 32.0),
@@ -183,43 +193,93 @@ class _HeroContent extends StatelessWidget {
   }
 }
 
-// ─────────────────────────── Available Badge ─────────────────────────────────
+class _AvailableBadge extends StatefulWidget {
+  @override
+  State<_AvailableBadge> createState() => _AvailableBadgeState();
+}
 
-class _AvailableBadge extends StatelessWidget {
+class _AvailableBadgeState extends State<_AvailableBadge>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _pulse;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1600),
+    )..repeat();
+    _pulse = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: AppColors.success,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.success.withValues(alpha: 0.5),
-                blurRadius: 6,
-                spreadRadius: 1,
-              ),
-            ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.success.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(100),
+        border: Border.all(color: AppColors.success.withValues(alpha: 0.25)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 14,
+            height: 14,
+            child: AnimatedBuilder(
+              animation: _pulse,
+              builder:
+                  (_, __) => Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Pulse ring
+                      Transform.scale(
+                        scale: 0.6 + (_pulse.value * 0.8),
+                        child: Opacity(
+                          opacity: (1 - _pulse.value).clamp(0, 1),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.success.withValues(alpha: 0.5),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Core dot
+                      Container(
+                        width: 7,
+                        height: 7,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.success,
+                        ),
+                      ),
+                    ],
+                  ),
+            ),
           ),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          'Available for opportunities',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppColors.success,
-            fontWeight: FontWeight.w500,
+          const SizedBox(width: 8),
+          Text(
+            'Available for opportunities',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: AppColors.success,
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
-
 // ─────────────────────────── Social Links ────────────────────────────────────
 
 class _SocialLinks extends StatelessWidget {
